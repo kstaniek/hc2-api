@@ -1,0 +1,28 @@
+HC2 PHP API
+Klaudiusz Staniek - kstaniek at gmail.com
+
+Minimal interface to control Z-Wave appliance over HC2.
+It can be installed directly on HC2 (need to get root access which is quite easy)
+
+-- Features:
+- DimmerOn
+- DimmerOff
+
+-- Requirements:
+- webserver with php or run directly on HC2
+
+-- Install:
+- copy all files into your htdocs
+- modify the first lines of index.php to fit your configuration - add IP address of your HC2
+- open it in browser, you're done
+
+-- Usage:
+http://hc2/index.php?command=dimmer_on&id=5&value=90	- set dimmer with ID=5 to 90%
+http://hc2/index.php?command=dimmer_off&id=6		- off dimmer with ID=6
+
+
+-- Todo:
+More commands to controll other appliances through HC
+
+
+
