@@ -1,7 +1,8 @@
 <?php
 
-define("HC2_CMD_FIBARO",		"FIBARO\n");
-define("HC2_CMD_EVENT1003",		"EVENT -1003 Event #-1003\n");
+define("HC2_CMD_FIBARO",		"FIBARO\n");						// Sounds like hello/wakeup command ;-)
+define("HC2_CMD_EVENT1003",		"EVENT -1003 Event #-1003\n");				// WTF is this?
+define("HC2_CMD_SET_MODULE_POWER",	"vvvvvvvvvvvvvvvvvvvvvvvvva*xvvvva*xvva*xvvvvvv");	// Frame format for dimmer and on/off
 
 define("HC2_RES_YES",		"YES");
 define("HC2_RES_ERR",		"ERROR");
@@ -15,48 +16,8 @@ class hc2 {
 	var $hc2_sock = NULL;
 	var $connected = FALSE;
 	
-	var $debugging	= TRUE;
+	var $debugging	= FALSE;	// Change to TRUE for debugging
 	var $errStr	= "";
-
-	var $command_queue;
-	private static $hc2_frame_cmd_dimmer_on = Array("MESSAGE 82            ",
-                                "\x00",
-                                "\xd2\x04",
-                                "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00",
-                                "\x01\x00\x00\x00",
-                                "\x01\x00\x00\x00",
-                                "\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00",
-                                "\x01\x04\x00\x00\x00\x00\x00\x00",
-                                "\x01\x00\x00\x00\x00\x00",
-                                "\x32\x30\x00",
-                                "\x02\x00\x00\x00",
-                                "\x01\x00\x00\x00",
-                                "<ID>",		// ID 
-                                "\x00",
-                                "\x65\x00\x00\x00",
-                                "<Value>",		// Value
-                                "\x00\x00\x00\x00\x00\x00\x00\x00\x00",
-                                "\x85\x1a\x00\x00");
-	
-	private static $hc2_frame_cmd_dimmer_off = Array("MESSAGE 81            ",
-                                "\x00",
-                                "\xd2\x04",
-                                "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00",
-                                "\x01\x00\x00\x00",
-                                "\x01\x00\x00\x00",
-                                "\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00",
-                                "\x01\x04\x00\x00\x00\x00\x00\x00",
-                                "\x01\x00\x00\x00\x00\x00",
-                                "\x32\x30\x00",
-                                "\x02\x00\x00\x00",
-                                "\x01\x00\x00\x00",
-                                "<ID>",		// ID
-                                "\x00",
-                                "\x65\x00\x00\x00",
-                                "0",		// Value = 0
-                                "\x00\x00\x00\x00\x00\x00\x00\x00\x00",
-                                "\x85\x1a\x00\x00");
-
 
 
 	function hc2($srv,$port) {
@@ -164,35 +125,22 @@ class hc2 {
                 if ( ! $this->connected ) {
                         echo "hc2->SendFrame() / Error: Not connected\n";
                 } else {
-                        fputs($this->hc2_sock,$frame);
+			$message = "MESSAGE ".strlen($frame);
+			$message = pack("A22x",$message).$frame;
+                        fputs($this->hc2_sock,$message);
                         if ( $this->debugging ) echo "hc2->SendFrame() \n";
                 }
                 return;
         }
 
 
-	function DimmerOn($id,$value)   {
-		$frame="";
-		$f = self::$hc2_frame_cmd_dimmer_on;
-		$f[12] = $id;
-		$f[15] = $value;
-		foreach($f as $c) {
-			$frame .= $c;
-		}
+	function SetModulePower($id,$value)   {
+		$frame=pack(HC2_CMD_SET_MODULE_POWER,
+			1234,0,0,0,0,0,0,0,1,0,1,0,1,0,0,0,0,0,260,0,0,0,1,0,0,
+			"20",2,0,1,0,$id,101,0,$value,0,0,0,0,6789,0);
 		$this->SendFrame($frame);
                 return;
         }
-	function DimmerOff($id)   {
-                $frame="";
-                $f = self::$hc2_frame_cmd_dimmer_off;
-                $f[12] = $id;
-                foreach($f as $c) {
-                        $frame .= $c;
-                }
-                $this->SendFrame($frame);
-                return;
-        }
-
 
 
 	function Disconnect() {

@@ -1,7 +1,7 @@
 <?php
 
 
-$hc2Server = '192.168.1.230';	// Change to own IP address
+$hc2Server = '192.168.1.230';	// Change to IP address of your HC2
 $hc2Port = '4420';
 
 include 'inc/hc2.class.php';
@@ -17,12 +17,9 @@ if($hc2->connected == FALSE) {
 	$hc2->SendFibaro();
 
 	switch($_GET['command']) {
-		case 'dimmer_on':
-			$hc2->DimmerOn($_GET['id'],$_GET['value']);
+		case 'hc2_set_module_power':
+			$hc2->SetModulePower($_GET['id'],$_GET['value']);
 			break;	
-		case 'dimmer_off':
-			$hc2->DimmerOff($_GET['id']);
-			break;
 			
 	}
 }

@@ -1,28 +1,33 @@
 HC2 PHP API
 Klaudiusz Staniek - kstaniek at gmail.com
 
-Minimal interface to control Z-Wave appliance over HC2.
-It can be installed directly on HC2 (need to get root access which is quite easy)
+Minimal interface to control Z-Wave appliances over Fibaro HC2.
+It can be installed directly on HC2 (need to get the root access which is quite easy - please don't ask me how)
+It uses port 4420/tcp to communicate with FibaroServer process running on HC2.
 
 -- Features:
-- DimmerOn
-- DimmerOff
+- Controlling Fibaro FGS221
+- Controlling Fibaro DFG211
+- Controlling Fibaro FGS211	- not tested
 
 -- Requirements:
 - webserver with php or run directly on HC2
 
 -- Install:
-- copy all files into your htdocs
-- modify the first lines of index.php to fit your configuration - add IP address of your HC2
+- copy all files into your apache www directory.
+- modify the first lines of index.php to fit your configuration - update the IP address of HC2
 - open it in browser, you're done
 
 -- Usage:
-http://hc2/index.php?command=dimmer_on&id=5&value=90	- set dimmer with ID=5 to 90%
-http://hc2/index.php?command=dimmer_off&id=6		- off dimmer with ID=6
+http://hc2/index.php?command=hc2_set_module_power&id=<id>&value=<value>	- set power to <value> for module with ID = <id> 
+
+				for on/off module value=0 means off and value set to any non zero means on
 
 
 -- Todo:
-More commands to control other appliances through HC
+More commands to control other appliances through HC.
+Setting the parameters of the appliances.
+Polling the appliances.
 
 
 
